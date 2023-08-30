@@ -182,6 +182,11 @@
       "getUserInfoAbort": "Get user profile request has been canceled. ({siteName})",
       "getUserInfoAbortError": "Cancellation failed to get user profile request. ({siteName})",
       "offline":"Offline",
+      "torrents": "Torrents",
+      "mailbox": "MailBox",
+      "control_panel": "ControlPanel",
+      "security": "Security",
+      "2FA": "2FA",
       "headers": {
         "date": "Date",
         "site": "Site",
@@ -217,6 +222,7 @@
         "bonus": "Bonus",
         "seedingPoints": "Seeding Points",
         "seedingTime": "Seeding Time",
+        "averageSeedtime": "Average Seedtime",
         "bonusPerHour": "Bonus per hour",
         "joinTime": "Join time",
         "lastUpdateTime": "Update at",
@@ -230,7 +236,9 @@
         "classPoints": "Class Points",
         "uniqueGroups": "Unique Groups",
         "perfectFLAC": "\"Perfect\" FLAC",
-        "alternative": "Alternative"
+        "posts": "Forum Posts",
+        "alternative": "Alternative",
+        "days": "Days"
       },
       "tip": "N/A means no support",
       "nodata": "You have not added a site, please go to [Sites] to add a site."
@@ -266,7 +274,8 @@
       "blurSiteIcon": "Blur site icon",
       "userName": "User name",
       "userLevel": "User level",
-      "userId": "User UID",
+      "userUploads": "User uploads",
+      "userId": "User ID",
       "showSites": "Show Sites",
       "close": "Close",
       "shareMessage": "Growth process",
@@ -281,17 +290,22 @@
         "lessThanAWeek": "Less than a week"
       },
       "total": {
-        "uploaded": "Total uploads: ",
+        "sites": "Total sites: ",
+        "uploads": "Total uploads: ",
+        "uploaded": "Total uploaded: ",
         "downloaded": "Total download: ",
         "seedingSize": "Seeding size: ",
+        "seeding": "Total Seeding: ",
         "ratio": "Total ratio: ",
         "years": "PT ages：≈ {year} year(s)"
       },
       "updateat": "Update at: ",
       "user": {
+        "uploads":"Uploads: ",
         "uploaded": "Uploaded: ",
         "downloaded": "Downloaded: ",
         "seedingSize": "Seeding size: ",
+        "averageSeedtime": "Average Seedtime: {day} day(s)",
         "ratio": "Ratio: ",
         "bonus": "Bonus: ",
         "bonusPerHour": "Bonus per hour: "
@@ -574,8 +588,11 @@
           "removeSelectedConfirm": "Are you sure you want to delete the selected download server?",
           "ok": "OK",
           "cancel": "Cancel",
+          "yes": "Y",
+          "no": "N",
           "headers": {
             "name": "Name",
+            "enabled": "Enabled",
             "type": "Type",
             "address": "Address",
             "action": "Action"
@@ -720,6 +737,10 @@
           "timezone": "Timezone",
           "upLoadLimit": "Upload limit",
           "upLoadLimitTip": "Upload limit (KB\/s), 0 or empty for no limit",
+          "enableQuickLink": "Enable QuickLink",
+          "enableDefaultQuickLink": "Enable Default QuickLink",
+          "quickLinkText": "Custom QuickLink Text",
+          "quickLinkTextTip": "Fill in an address in each line, and commas separate comments and URLs and colors (supports hexadecimal). Such as: 'Baidu, https://baidu.com, #2196f3'",
           "disableMessageCount": "Display message count"
         },
         "userinfo": {

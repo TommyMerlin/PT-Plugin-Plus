@@ -34,6 +34,8 @@
                 @change="updateViewOptions"></v-switch>
               <v-switch color="success" v-model="showWeek" :label="$t('home.week')"
                 @change="updateViewOptions"></v-switch>
+              <!--<v-switch color="success" v-model="showUserUploads" :label="$t('home.headers.uploads')"-->
+              <!--  @change="updateViewOptions"></v-switch>-->
               <v-switch color="success" v-model="showSeedingPoints" :label="$t('home.seedingPoints')"
                 @change="updateViewOptions"></v-switch>
               <v-switch color="success" v-model="showHnR" :label="$t('home.showHnR')"
@@ -93,6 +95,20 @@
               {{ props.item.user.name }}
             </template>
             <template v-else> **** </template>
+            <v-card  v-if="props.item.enableQuickLink" class="userQuickLinks">
+                <template v-if="props.item.enableDefaultQuickLink">
+                  <template v-for="link of defaultQuickLinks(props.item)">
+                    <v-btn outline elevation="2" class="x-small" target="_blank"
+                           :color="link.color" :href="link.href" >{{ link.desc }}</v-btn>
+                  </template>
+                  <hr>
+                </template>
+              <!--Vuetify 点击后新开窗口也-->
+                <template v-for="link of props.item.userQuickLinks">
+                  <v-btn outline elevation="2" class="x-small" target="_blank"
+                         :color="link.color" :href="link.href" >{{ link.desc }}</v-btn>
+                </template>
+            </v-card>
           </td>
           <td v-if="showColumn('user.levelName')">
             <v-icon v-if="showLevelRequirements" small>military_tech</v-icon>
@@ -127,6 +143,11 @@
                             nextLevel.bonus | formatNumber
                         }}&nbsp;
                       </template>
+                      <template v-if="nextLevel.seedingSize">
+                        <v-icon small color="blue darken-4">dns</v-icon>{{
+                            nextLevel.seedingSize | formatSize
+                        }}&nbsp;
+                      </template>
                       <template v-if="nextLevel.seedingPoints">
                         <v-icon small color="green darken-4">energy_savings_leaf</v-icon>{{
                             nextLevel.seedingPoints | formatNumber
@@ -136,6 +157,11 @@
                         <v-icon small color="green darken-4">timer</v-icon>{{
                             nextLevel.seedingTime | formatNumber
                         }}&nbsp;
+                      </template>
+                      <template v-if="nextLevel.averageSeedtime">
+                        <v-icon small color="green darken-4">timer</v-icon>{{
+                            nextLevel.averageSeedtime | formatNumber
+                        }}{{$t("home.levelRequirement.days")}}&nbsp;
                       </template>
                       <template v-if="nextLevel.uploads">
                         <v-icon small color="green darken-4">file_upload</v-icon>{{ nextLevel.uploads
@@ -151,6 +177,10 @@
                       </template>
                       <template v-if="nextLevel.perfectFLAC">
                         <v-icon small color="green darken-4">diamond</v-icon>{{ nextLevel.perfectFLAC
+                        }}&nbsp;
+                      </template>
+                      <template v-if="nextLevel.posts">
+                        <v-icon small color="green darken-4">post_add</v-icon>{{ nextLevel.posts
                         }}&nbsp;
                       </template>
                       <template v-if="nextLevel.classPoints">
@@ -196,6 +226,9 @@
                             formatInteger
                         }};
                       </template>
+                      <template v-if="levelRequirement.seedingSize">
+                        <v-icon small color="blue darken-4" :title="$t('home.levelRequirement.seedingSize')">dns</v-icon>{{ levelRequirement.seedingSize }};
+                      </template>
                       <template v-if="levelRequirement.seedingPoints">
                         <v-icon small color="green darken-4" :title="$t('home.levelRequirement.seedingPoints')">energy_savings_leaf</v-icon>{{ levelRequirement.seedingPoints
                             | formatInteger
@@ -205,6 +238,11 @@
                         <v-icon small color="green darken-4" :title="$t('home.levelRequirement.seedingTime')">timer</v-icon>{{ levelRequirement.seedingTime
                             | formatInteger
                         }};
+                      </template>
+                      <template v-if="levelRequirement.averageSeedtime">
+                        <v-icon small color="green darken-4" :title="$t('home.levelRequirement.averageSeedtime')">timer</v-icon>{{ levelRequirement.averageSeedtime
+                            | formatInteger
+                        }}{{$t("home.levelRequirement.days")}};
                       </template>
                       <template v-if="levelRequirement.classPoints">
                         <v-icon small color="yellow darken-4" :title="$t('home.levelRequirement.classPoints')">energy_savings_leaf</v-icon>{{ levelRequirement.classPoints
@@ -218,6 +256,11 @@
                       </template>
                       <template v-if="levelRequirement.perfectFLAC">
                         <v-icon small color="green darken-4" :title="$t('home.levelRequirement.perfectFLAC')">diamond</v-icon>{{ levelRequirement.perfectFLAC
+                            | formatInteger
+                        }};
+                      </template>
+                      <template v-if="levelRequirement.posts">
+                        <v-icon small color="green darken-4" :title="$t('home.levelRequirement.posts')">post_add</v-icon>{{ levelRequirement.posts
                             | formatInteger
                         }};
                       </template>
@@ -251,6 +294,9 @@
                                 formatInteger
                             }};
                           </template>
+                          <template v-if="option.seedingSize">
+                            <v-icon small color="blue darken-4" :title="$t('home.levelRequirement.seedingSize')">dns</v-icon>{{ option.seedingSize }};
+                          </template>
                           <template v-if="option.seedingPoints">
                             <v-icon small color="green darken-4" :title="$t('home.levelRequirement.seedingPoints')">energy_savings_leaf</v-icon>{{ option.seedingPoints
                                 | formatInteger
@@ -260,6 +306,11 @@
                             <v-icon small color="green darken-4" :title="$t('home.levelRequirement.seedingTime')">timer</v-icon>{{ option.seedingTime
                                 | formatInteger
                             }};
+                          </template>
+                          <template v-if="option.averageSeedtime">
+                            <v-icon small color="green darken-4" :title="$t('home.levelRequirement.averageSeedtime')">timer</v-icon>{{ option.averageSeedtime
+                                | formatInteger
+                            }}{{$t("home.levelRequirement.days")}};
                           </template>
                           <template v-if="option.classPoints">
                             <v-icon small color="yellow darken-4" :title="$t('home.levelRequirement.classPoints')">energy_savings_leaf</v-icon>{{ option.classPoints
@@ -273,6 +324,11 @@
                           </template>
                           <template v-if="option.perfectFLAC">
                             <v-icon small color="green darken-4" :title="$t('home.levelRequirement.perfectFLAC')">diamond</v-icon>{{ option.perfectFLAC
+                                | formatInteger
+                            }};
+                          </template>
+                          <template v-if="option.posts">
+                            <v-icon small color="green darken-4" :title="$t('home.levelRequirement.posts')">post_add</v-icon>{{ option.posts
                                 | formatInteger
                             }};
                           </template>];
@@ -297,6 +353,9 @@
           </td>
           <td v-if="showColumn('user.ratio')" class="number">
             {{ props.item.user.ratio | formatRatio }}
+          </td>
+          <td v-if="showColumn('user.uploads')" class="number">
+            <template v-if="props.item.user.uploads && props.item.user.uploads > 0">{{ props.item.user.uploads}}</template>
           </td>
           <td v-if="showColumn('user.seeding')" class="number">
             <div>{{ props.item.user.seeding }}</div>
@@ -378,7 +437,7 @@ import {
   Options,
   UserInfo,
   EViewKey,
-  LevelRequirement,
+  LevelRequirement, UserQuickLink,
 } from "@/interface/common";
 import dayjs from "dayjs";
 
@@ -426,6 +485,11 @@ export default Vue.extend({
           text: this.$t("home.headers.ratio"),
           align: "right",
           value: "user.ratio",
+        },
+        {
+          text: this.$t("home.headers.uploads"),
+          align: "right",
+          value: "user.uploads",
         },
         {
           text: this.$t("home.headers.seeding"),
@@ -480,6 +544,7 @@ export default Vue.extend({
       showUserLevel: true,
       showLevelRequirements: true,
       showSeedingPoints: true,
+      // showUserUploads: false,
       showHnR: true,
       showWeek: false,
     };
@@ -657,12 +722,24 @@ export default Vue.extend({
             if (levelRequirement.requiredDate) break;
 
             if (levelRequirement.interval && user.joinDateTime) {
-              levelRequirement.requiredDate = dayjs(user.joinDateTime).add(levelRequirement.interval as number, "week").format("YYYY-MM-DD");
+              levelRequirement.requiredDate = this.getRequiredDate(levelRequirement.interval, user.joinDateTime).format("YYYY-MM-DD");
             } else break;
           }
 
           user.nextLevels = [] as LevelRequirement[];
+          let userLevel = -1;
           for (var levelRequirement of site.levelRequirements) {
+            if (user.levelName?.trim()?.toUpperCase() == levelRequirement.name?.trim()?.toUpperCase())
+            {
+              userLevel = Number(levelRequirement.level);
+              break;
+            }
+          }
+
+          for (var levelRequirement of site.levelRequirements) {
+            if (Number(levelRequirement.level) < userLevel)
+              continue;
+
             if (levelRequirement.alternative)
             {
               for (var option of levelRequirement.alternative)
@@ -670,7 +747,7 @@ export default Vue.extend({
                 var newLevelRequirement = Object.assign({}, levelRequirement)
                 for(var key of Object.keys(option) as Array<keyof LevelRequirement>) {
                   {
-                    
+
                     if (option[key])
                       newLevelRequirement[key] = option[key] as any
                   }
@@ -690,7 +767,7 @@ export default Vue.extend({
               if (user.nextLevels.length)
                   break;
             }
-            else 
+            else
             {
               let nextLevel = this.calculateNextLeve(user, levelRequirement);
               if (nextLevel) {
@@ -718,14 +795,13 @@ export default Vue.extend({
 
       let downloaded = user.downloaded ?? 0;
       let uploaded = user.uploaded ?? 0;
-      
+
       if (user.levelName == levelRequirement.name) {
         return undefined;
       }
 
       if (levelRequirement.interval && user.joinDateTime) {
-        let weeks = levelRequirement.interval as number;
-        let requiredDate = dayjs(user.joinDateTime).add(weeks, "week");
+        let requiredDate = this.getRequiredDate(levelRequirement.interval, user.joinDateTime);
         if (dayjs(new Date()).isBefore(requiredDate)) {
           nextLevel.requiredDate = requiredDate.format("YYYY-MM-DD");
           nextLevel.level = levelRequirement.level;
@@ -779,11 +855,29 @@ export default Vue.extend({
         }
       }
 
+      if (levelRequirement.seedingSize) {
+        let requiredSeedingSize = this.fileSizetoLength(levelRequirement.seedingSize as string);
+        let userSeedingSize = user.seedingSize ? user.seedingSize : 0 ;
+        if (userSeedingSize < requiredSeedingSize) {
+          nextLevel.seedingSize = requiredSeedingSize - userSeedingSize;
+          nextLevel.level = levelRequirement.level;
+        }
+      }
+
       if (levelRequirement.seedingTime) {
         let userSeedingTime = user.seedingTime as number;
         let requiredSeedingTime = levelRequirement.seedingTime as number;
         if (userSeedingTime < requiredSeedingTime) {
           nextLevel.seedingTime = requiredSeedingTime - userSeedingTime;
+          nextLevel.level = levelRequirement.level;
+        }
+      }
+
+      if (levelRequirement.averageSeedtime) {
+        let userAverageSeedtime = user.averageSeedtime as number;
+        let requiredAverageSeedtime = levelRequirement.averageSeedtime as number;
+        if (userAverageSeedtime < requiredAverageSeedtime) {
+          nextLevel.averageSeedtime = requiredAverageSeedtime - userAverageSeedtime;
           nextLevel.level = levelRequirement.level;
         }
       }
@@ -844,6 +938,15 @@ export default Vue.extend({
         }
       }
 
+      if (levelRequirement.posts) {
+        let userPosts = user.posts as number;
+        let requiredPosts = levelRequirement.posts as number;
+        if (userPosts < requiredPosts) {
+          nextLevel.posts = requiredPosts - userPosts;
+          nextLevel.level = levelRequirement.level;
+        }
+      }
+
       if ((nextLevel.level as number) > 0)
       {
         nextLevel.name = levelRequirement.name;
@@ -885,6 +988,26 @@ export default Vue.extend({
         }
       }
       return 0;
+    },
+    /**
+     * @return {dayjs.Dayjs}
+     */
+     getRequiredDate(interval: string, joinDateTime: string) : dayjs.Dayjs {
+      let unit = "week";
+      switch (interval.replace(/[^A-Za-z]/g, ""))
+      {
+        case "D":
+          unit = "day";
+          break;
+        case "M":
+          unit = "month";
+          break;
+        case "Y":
+          unit = "year";
+          break;
+      }
+      let num = interval.replace(/\D/g,'');
+      return dayjs(joinDateTime).add(parseInt(num), unit as dayjs.ManipulateType);
     },
     /**
      * 获取站点用户信息
@@ -964,6 +1087,7 @@ export default Vue.extend({
           showUserLevel: this.showUserLevel,
           showLevelRequirements: this.showLevelRequirements,
           showSeedingPoints: this.showSeedingPoints,
+          // showUserUploads: this.showUserUploads,
           showHnR: this.showHnR,
           showWeek: this.showWeek,
           selectedHeaders: this.selectedHeaders,
@@ -983,6 +1107,59 @@ export default Vue.extend({
       }
       return "";
     },
+    defaultQuickLinks: function (site: Site): UserQuickLink[] {
+      let uid = site.user?.id, uname = site.user?.name
+      let links: UserQuickLink[] = []
+      switch (site.schema) {
+        // from jpop
+        case 'Gazelle':
+          links = [
+            {color: 'primary', desc: `${uname}(${uid})`, href: new URL(`/user.php?id=${uid}`, site.activeURL).toString()},
+            {color: 'success', desc: this.$t("home.mailbox").toString(), href: new URL(`/inbox.php`, site.activeURL).toString()},
+            {color: 'success', desc: this.$t("home.torrents").toString(), href: new URL(`/torrents.php`, site.activeURL).toString()},
+            {color: 'primary', desc: this.$t("home.control_panel").toString(), href: new URL(`/user.php?action=edit&userid=${uid}`, site.activeURL).toString()},
+            // {color: 'primary', desc: this.$t("home.security").toString(), href: new URL(`/user.php?action=edit&userid=${uid}#paranoia_settings`, site.activeURL).toString()},
+            // {color: 'primary', desc: this.$t("home.2FA").toString(), href: new URL(`/user.php?action=edit&userid=${uid}#access_settings`, site.activeURL).toString()},
+          ]
+          break
+        // from GPW
+        case 'GazelleJSONAPI':
+          links = [
+            {color: 'primary', desc: `${uname}(${uid})`, href: new URL(`/user.php?id=${uid}`, site.activeURL).toString()},
+            {color: 'success', desc: this.$t("home.mailbox").toString(), href: new URL(`/inbox.php`, site.activeURL).toString()},
+            {color: 'success', desc: this.$t("home.torrents").toString(), href: new URL(`/torrents.php`, site.activeURL).toString()},
+            {color: 'primary', desc: this.$t("home.control_panel").toString(), href: new URL(`/user.php?action=edit&userid=${uid}`, site.activeURL).toString()},
+            {color: 'primary', desc: this.$t("home.security").toString(), href: new URL(`/user.php?action=edit&userid=${uid}#paranoia_settings`, site.activeURL).toString()},
+            // {color: 'primary', desc: this.$t("home.2FA").toString(), href: new URL(`/user.php?action=edit&userid=${uid}#access_settings`, site.activeURL).toString()},
+          ]
+          break
+        // from 观众
+        case 'NexusPHP':
+          links = [
+            {color: 'primary', desc: `${uname}(${uid})`, href: new URL(`/userdetails.php?id=${uid}`, site.activeURL).toString()},
+            {color: 'success', desc: this.$t("home.mailbox").toString(), href: new URL(`/messages.php`, site.activeURL).toString()},
+            {color: 'success', desc: this.$t("home.torrents").toString(), href: new URL(`/torrents.php`, site.activeURL).toString()},
+            {color: 'primary', desc: this.$t("home.control_panel").toString(), href: new URL(`/usercp.php`, site.activeURL).toString()},
+            {color: 'primary', desc: this.$t("home.security").toString(), href: new URL(`/usercp.php?action=security`, site.activeURL).toString()},
+            // {color: 'primary', desc: this.$t("home.2FA").toString(), href: new URL(`/usercp.php?action=secAuth`, site.activeURL).toString()},
+          ]
+          break
+        // from zhuque
+        case 'TNode':
+          links = [
+            {color: 'primary', desc: `${uname}(${uid})`, href: new URL(`/user/info`, site.activeURL).toString()},
+            {color: 'success', desc: this.$t("home.mailbox").toString(), href: new URL(`/message/system`, site.activeURL).toString()},
+            {color: 'success', desc: this.$t("home.torrents").toString(), href: new URL(`/torrent/list/`, site.activeURL).toString()},
+            {color: 'primary', desc: this.$t("home.control_panel").toString(), href: new URL(`/user/setting`, site.activeURL).toString()},
+          ]
+          break
+        case 'Discuz':
+        case 'UNIT3D':
+        default:
+          break
+      }
+      return links
+    }
   },
 
   filters: {
@@ -1033,6 +1210,26 @@ export default Vue.extend({
     margin: 0;
     height: 30px;
     width: 30px;
+  }
+
+  td:hover div.userQuickLinks {
+    display: block;
+  }
+
+  .userQuickLinks {
+    position: absolute;
+    display: none;
+    z-index: 999;
+    border: 1px solid;
+    max-width: 50%;
+    min-width: 405px;
+  }
+
+  .x-small {
+    height: 20px;
+    min-width: 36px;
+    padding: 0 8.8888888889px;
+    margin: 5px;
   }
 
   td:hover div.levelRequirement {
